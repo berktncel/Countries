@@ -31,13 +31,20 @@ class FeedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(FeedViewModel::class.java)
-        viewModel.refreshCountry()
+        viewModel.refreshData()
 
         countryList.layoutManager = LinearLayoutManager(context)
         countryList.adapter = countryAdapter
 
-        observeLiveData()
+        swipeRefreshLayout.setOnRefreshListener {
+            countryList.visibility = View.GONE
+            countryError.visibility = View.GONE
+            countryLoading.visibility = View.VISIBLE
+            viewModel.refreshData()
+            swipeRefreshLayout.isRefreshing = false
+        }
 
+        observeLiveData()
     }
 
     private fun observeLiveData() {
